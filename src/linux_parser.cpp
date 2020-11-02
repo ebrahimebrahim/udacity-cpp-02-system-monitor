@@ -24,7 +24,7 @@ string LinuxParser::OperatingSystem() {
   while (std::getline(ifs, line)) {
     auto split_line = split(line,"=");
     if (split_line.size()>=2 && split_line[0]=="PRETTY_NAME")
-      return split_line[1];
+      return strip(split_line[1],{'\"'});
   }
   return FAIL_STRING;
 }

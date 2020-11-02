@@ -3,6 +3,10 @@
 
 #include "util.h"
 
+
+
+// Tests for string splitting
+
 using vecstr = std::vector<std::string>;
 
 TEST_CASE( "split one word", "[split]" ) {
@@ -67,4 +71,27 @@ TEST_CASE( "split_whitespace initial whitespace", "[split]" ) {
 
 TEST_CASE( "split_whitespace final whitespace", "[split]" ) {
     REQUIRE( split_whitespace("hello  world      ") == vecstr{"hello", "world"} );
+}
+
+
+// Tests for string stripping
+
+TEST_CASE( "basic strip", "[strip]" ) {
+    REQUIRE( strip(" hello ") == "hello" );
+}
+
+TEST_CASE( "basic strip 2", "[strip]" ) {
+    REQUIRE( strip("   hello  ") == "hello" );
+}
+
+TEST_CASE( "leading only strip", "[strip]" ) {
+    REQUIRE( strip("    hello") == "hello" );
+}
+
+TEST_CASE( "trailing only strip", "[strip]" ) {
+    REQUIRE( strip("hello    ") == "hello" );
+}
+
+TEST_CASE( "complicated strip", "[strip]" ) {
+    REQUIRE( strip("((hello)!!!)", {'!', '(', ')'}) == "hello" );
 }
