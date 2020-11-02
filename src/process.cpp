@@ -33,3 +33,8 @@ long int Process::UpTime() { return 0; }
 bool Process::operator<(Process const& a [[maybe_unused]]) const {
   return true;
 }
+
+// TODO: update as needed
+void Process::update(){
+  
+}

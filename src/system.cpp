@@ -15,13 +15,22 @@ using std::string;
 using std::vector;
 
 
-// TODO: set appropriate member variables using LinuxParser
 void System::init() {
-    memory_utilization = LinuxParser::MemoryUtilization();
+    kernel = LinuxParser::Kernel();
+    operating_system = LinuxParser::OperatingSystem();
+    
+    update();
 }
 
 
-// TODO: update appropriate member variables using LinuxParser
 void System::update() {
+    cpu.update();
+
+    for (Process & process : processes)
+        process.update();
+    
     memory_utilization = LinuxParser::MemoryUtilization();
+    uptime = LinuxParser::UpTime();
+    total_processes = LinuxParser::TotalProcesses();
+    running_processes = LinuxParser::RunningProcesses();
 }
