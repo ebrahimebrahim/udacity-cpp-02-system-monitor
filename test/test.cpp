@@ -3,10 +3,8 @@
 
 #include "util.h"
 
-TEST_CASE( "jej test" ) {
-    REQUIRE( jej() == 142 );
-}
+using vecstr = std::vector<std::string>;
 
-TEST_CASE( "jej test meant to fail" ) {
-    REQUIRE( jej() == 143 );
+TEST_CASE( "default split two words", "[split]" ) {
+    REQUIRE( split("hello world") == vecstr({"hello", "world"}) );
 }
