@@ -4,6 +4,4 @@
 float Processor::Utilization() { return 0.0; }
 
 // TODO : update member variables as needed
-void Processor::update() {
-
-}
+void Processor::update() {}

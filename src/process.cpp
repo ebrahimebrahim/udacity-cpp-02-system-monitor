@@ -35,6 +35,4 @@ bool Process::operator<(Process const& a [[maybe_unused]]) const {
 }
 
 // TODO: update as needed
-void Process::update(){
-  
-}
+void Process::update() {}
