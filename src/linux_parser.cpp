@@ -1,7 +1,9 @@
 #include <dirent.h>
 #include <unistd.h>
 #include <string>
+#include <sstream>
 #include <vector>
+#include <stdexcept>
 
 #include "linux_parser.h"
 #include "util.h"
@@ -13,12 +15,21 @@ using std::vector;
 
 #define FAIL_STRING "[PARSER ERROR]"
 
+
+// Open file and return filestream, throwing an exception if it doesn't work out
+std::ifstream LinuxParser::try_open(const std::string & filepath) {
+  std::ifstream ifs(filepath);
+  if (!ifs.is_open()) throw std::runtime_error(std::string("Unable to open file ")+filepath);
+  return ifs;
+}
+
+
+// Parse OS pretty name
 string LinuxParser::OperatingSystem() {
   string line;
   string key;
   string value;
-  std::ifstream ifs(kOSPath);
-  if (!ifs.is_open()) return FAIL_STRING;
+  std::ifstream ifs = try_open(kOSPath);
   while (std::getline(ifs, line)) {
     auto split_line = split(line, "=");
     if (split_line.size() >= 2 && split_line[0] == "PRETTY_NAME")
@@ -27,10 +38,11 @@ string LinuxParser::OperatingSystem() {
   return FAIL_STRING;
 }
 
+
+// Parse linux kernl version
 string LinuxParser::Kernel() {
   string line;
-  std::ifstream ifs(kProcDirectory + kVersionFilename);
-  if (!ifs.is_open()) return FAIL_STRING;
+  std::ifstream ifs = try_open(kProcDirectory + kVersionFilename);
   std::getline(ifs, line);
   auto split = split_whitespace(line);
   if (split.size() < 3)
@@ -38,6 +50,7 @@ string LinuxParser::Kernel() {
   else
     return split[2];
 }
+
 
 // BONUS: Update this to use std::filesystem
 vector<int> LinuxParser::Pids() {
@@ -59,8 +72,29 @@ vector<int> LinuxParser::Pids() {
   return pids;
 }
 
-// TODO: Read and return the system memory utilization
-float LinuxParser::MemoryUtilization() { return 0.0; }
+
+// Parse /proc/meminfo to estimate memory utilization
+// This considers available memory to be MemAvailable, described here:
+// https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=34e431b0ae398fc54ea69ff85ec700722c9da773 
+// Perhaps this program ought to have a fallback in case MemAvailable isn't there, for compatibility with older linux.
+float LinuxParser::MemoryUtilization() {
+  string token;
+  std::ifstream ifs = try_open(kProcDirectory + kMeminfoFilename);
+  long memtotal = -1;
+  long memfree = -1;
+  while (ifs >> token && (memtotal < 0 || memfree < 0)){
+    if (token=="MemTotal:") {
+      if (! (ifs >> memtotal) ) break;
+    }
+    else if (token=="MemAvailable:") {
+      if (! (ifs >> memfree) ) break;
+    }
+  }
+  if (memtotal <= 0 || memfree < 0)
+    throw std::runtime_error(std::string("Error parsing MemTotal and MemAvailable in ")+kProcDirectory + kMeminfoFilename);
+  
+  return float(memtotal - memfree)/float(memtotal);
+ }
 
 // TODO: Read and return the system uptime
 long LinuxParser::UpTime() { return 0; }

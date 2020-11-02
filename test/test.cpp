@@ -49,6 +49,9 @@ TEST_CASE( "split many words", "[split]" ) {
     REQUIRE( split("hello world it's just another day"," ") == vecstr{"hello", "world", "it's", "just", "another", "day"} );
 }
 
+
+// Tests for splitting on whitespace
+
 TEST_CASE( "split_whitespace empty string", "[split]" ) {
     REQUIRE( split_whitespace("").empty() );
 }
