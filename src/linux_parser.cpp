@@ -13,7 +13,6 @@ using std::vector;
 
 #define FAIL_STRING "[PARSER ERROR]"
 
-
 string LinuxParser::OperatingSystem() {
   string line;
   string key;
@@ -21,9 +20,9 @@ string LinuxParser::OperatingSystem() {
   std::ifstream ifs(kOSPath);
   if (!ifs.is_open()) return FAIL_STRING;
   while (std::getline(ifs, line)) {
-    auto split_line = split(line,"=");
-    if (split_line.size()>=2 && split_line[0]=="PRETTY_NAME")
-      return strip(split_line[1],{'\"'});
+    auto split_line = split(line, "=");
+    if (split_line.size() >= 2 && split_line[0] == "PRETTY_NAME")
+      return strip(split_line[1], {'\"'});
   }
   return FAIL_STRING;
 }
@@ -34,8 +33,10 @@ string LinuxParser::Kernel() {
   if (!ifs.is_open()) return FAIL_STRING;
   std::getline(ifs, line);
   auto split = split_whitespace(line);
-  if (split.size() < 3) return FAIL_STRING;
-  else return split[2];
+  if (split.size() < 3)
+    return FAIL_STRING;
+  else
+    return split[2];
 }
 
 // BONUS: Update this to use std::filesystem
