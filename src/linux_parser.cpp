@@ -14,7 +14,6 @@ using std::vector;
 #define FAIL_STRING "[PARSER ERROR]"
 
 
-// DONE: An example of how to read data from the filesystem
 string LinuxParser::OperatingSystem() {
   string line;
   string key;
@@ -29,7 +28,6 @@ string LinuxParser::OperatingSystem() {
   return FAIL_STRING;
 }
 
-// DONE: An example of how to read data from the filesystem
 string LinuxParser::Kernel() {
   string line;
   std::ifstream ifs(kProcDirectory + kVersionFilename);
