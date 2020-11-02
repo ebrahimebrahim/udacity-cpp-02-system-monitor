@@ -12,12 +12,13 @@ std::vector<std::string> split(const std::string& str, const std::string& separa
   
   int token_start = 0;
 
-  size_t separator_start;
+  size_t separator_start{};
   while ((separator_start = str.find(separator,token_start)) != std::string::npos){
     int token_length = separator_start - token_start;
     out.push_back(str.substr(token_start,token_length));
     token_start += token_length + separator.length();
   }
+  out.push_back(str.substr(token_start));
 
   return out;
 }
