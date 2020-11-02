@@ -19,30 +19,22 @@ string LinuxParser::OperatingSystem() {
   string line;
   string key;
   string value;
-  std::ifstream filestream(kOSPath);
-  if (filestream.is_open()) {
-    while (std::getline(filestream, line)) {
-      std::replace(line.begin(), line.end(), ' ', '_');
-      std::replace(line.begin(), line.end(), '=', ' ');
-      std::replace(line.begin(), line.end(), '"', ' ');
-      std::istringstream linestream(line);
-      while (linestream >> key >> value) {
-        if (key == "PRETTY_NAME") {
-          std::replace(value.begin(), value.end(), '_', ' ');
-          return value;
-        }
-      }
-    }
+  std::ifstream ifs(kOSPath);
+  if (!ifs.is_open()) return FAIL_STRING;
+  while (std::getline(ifs, line)) {
+    auto split_line = split(line,"=");
+    if (split_line.size()>=2 && split_line[0]=="PRETTY_NAME")
+      return split_line[1];
   }
-  return value;
+  return FAIL_STRING;
 }
 
 // DONE: An example of how to read data from the filesystem
 string LinuxParser::Kernel() {
   string line;
-  std::ifstream stream(kProcDirectory + kVersionFilename);
-  if (!stream.is_open()) return FAIL_STRING;
-  std::getline(stream, line);
+  std::ifstream ifs(kProcDirectory + kVersionFilename);
+  if (!ifs.is_open()) return FAIL_STRING;
+  std::getline(ifs, line);
   auto split = split_whitespace(line);
   if (split.size() < 3) return FAIL_STRING;
   else return split[2];
