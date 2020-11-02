@@ -4,11 +4,15 @@
 #include <vector>
 
 #include "linux_parser.h"
+#include "util.h"
 
 using std::stof;
 using std::string;
 using std::to_string;
 using std::vector;
+
+#define FAIL_STRING "[PARSER ERROR]"
+
 
 // DONE: An example of how to read data from the filesystem
 string LinuxParser::OperatingSystem() {
@@ -35,15 +39,13 @@ string LinuxParser::OperatingSystem() {
 
 // DONE: An example of how to read data from the filesystem
 string LinuxParser::Kernel() {
-  string os, version, kernel;
   string line;
   std::ifstream stream(kProcDirectory + kVersionFilename);
-  if (stream.is_open()) {
-    std::getline(stream, line);
-    std::istringstream linestream(line);
-    linestream >> os >> version >> kernel;
-  }
-  return kernel;
+  if (!stream.is_open()) return FAIL_STRING;
+  std::getline(stream, line);
+  auto split = split_whitespace(line);
+  if (split.size() < 3) return FAIL_STRING;
+  else return split[2];
 }
 
 // BONUS: Update this to use std::filesystem

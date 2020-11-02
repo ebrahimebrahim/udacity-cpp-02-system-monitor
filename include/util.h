@@ -1,5 +1,6 @@
 #include <string>
 #include <vector>
+#include <sstream>
 
 /**
  *  @brief  Split a string based on a separator
@@ -30,5 +31,10 @@ std::vector<std::string> split(const std::string& str, const std::string& separa
  */
 std::vector<std::string> split_whitespace(const std::string& str) {
   std::vector<std::string> out;
+  
+  std::istringstream iss(str);
+  std::string token;
+  while(iss >> token) out.push_back(token);
+  
   return out;
 }
