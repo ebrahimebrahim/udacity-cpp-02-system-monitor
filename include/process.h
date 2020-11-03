@@ -2,10 +2,9 @@
 #define PROCESS_H
 
 #include <string>
-/*
-Basic class for Process representation
-It contains relevant attributes as shown below
-*/
+
+#include "linux_parser.h"
+
 class Process {
  public:
   Process() = delete;
@@ -26,6 +25,7 @@ class Process {
   // TODO: Declare any necessary private members
  private:
   int pid{};
+  LinuxParser::ProcessStatData pstat_data{};
   
 };
 

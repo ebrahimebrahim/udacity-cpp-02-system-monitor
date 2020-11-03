@@ -13,7 +13,9 @@ using std::vector;
 
 // TODO: update as needed
 // Can fail quietly if process no longer exists
-void Process::update() {}
+void Process::update() {
+  LinuxParser::ParseProcessStats(pid, pstat_data);
+}
 
 // TODO: update as needed
 // Can fail quietly if process no longer exists

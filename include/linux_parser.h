@@ -18,6 +18,7 @@ const std::string kMeminfoFilename{"/meminfo"};
 const std::string kVersionFilename{"/version"};
 const std::string kOSPath{"/etc/os-release"};
 const std::string kPasswordPath{"/etc/passwd"};
+std::string pid_directory(int pid);
 std::ifstream try_open(const std::string & filepath);
 
 // CPU states to serve as indices in vectors. See /proc/stat in "man proc"
@@ -47,6 +48,19 @@ struct StatData {
   int running_processes{};
 };
 
+// Struct to represent what gets parsed from /proc/[pid]/stat
+// See "/proc/[pid]/stat" in "man proc" for details
+struct ProcessStatData {
+  // these are in clock ticks, divide by sysconf(_SC_CLK_TCK) to convert
+  unsigned long utime{}; // Amount of time that this process has been scheduled in user mode
+  unsigned long stime{}; // Amount of time that this process has been scheduled in kernel mode
+  unsigned long cutime{}; // Amount  of  time  that this process's waited-for children have been scheduled in user mode
+  unsigned long cstime{}; // Amount of time that this process's waited-for children have been scheduled in kernel mode
+  unsigned long long starttime{}; // The time the process started after system boot
+  
+  unsigned long vsize{}; // Virtual memory size in bytes
+};
+
 // System
 float MemoryUtilization();
 long UpTime();
@@ -56,6 +70,7 @@ std::string OperatingSystem();
 std::string Kernel();
 
 // Processes
+void ParseProcessStats(int pid, ProcessStatData &);
 long ActiveJiffies(int pid);
 std::string Command(int pid);
 std::string Ram(int pid);

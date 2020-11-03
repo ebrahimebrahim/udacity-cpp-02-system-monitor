@@ -16,6 +16,12 @@ using std::vector;
 #define FAIL_STRING "[PARSER ERROR]"
 
 
+std::string LinuxParser::pid_directory(int pid) {
+  std::ostringstream oss;
+  oss << kProcDirectory << '/' << pid;
+  return oss.str();
+}
+
 // Open file and return filestream, throwing an exception if it doesn't work out
 std::ifstream LinuxParser::try_open(const std::string & filepath) {
   std::ifstream ifs(filepath);
@@ -145,6 +151,50 @@ void LinuxParser::ParseStats(LinuxParser::StatData & stat_data) {
   if (success_flags != 0b0000'0111)
     throw std::runtime_error(std::string("Error parsing ")+kProcDirectory + kStatFilename);
 }
+
+// Parse /proc/[pid]/stat
+// Store the result in the argument pstat_data
+void LinuxParser::ParseProcessStats(int pid, LinuxParser::ProcessStatData & pstat_data) {
+  std::ifstream ifs = try_open(pid_directory(pid) + kStatFilename);
+  std::string line;
+  std::getline(ifs,line);
+  
+  // line is a space separated list of columns that we are interested in
+  // But there is one column 'comm' which is a paren-enclosed filename, which can have spaces (and more parens)
+  // We don't need any columns before that one, so we skip to the last ')' and avoid the problem
+  int right_paren_idx{};
+  try {
+    right_paren_idx = line.find_last_of(')');
+    line = line.substr(right_paren_idx+1);
+  }
+  catch(const std::out_of_range & error) {
+    throw std::runtime_error(std::string("Error parsing ")+pid_directory(pid) + kStatFilename+": couldn't read past a right paren");
+  }
+
+  // It should be that we dropped 2 columns. Also, column numbers in "man proc" start counting at 1, not 0.
+  constexpr int offset = (-2) + (-1);
+
+  auto line_split = split_whitespace(line);
+  // There are 52 columns and we dropped 2. There should be exactly 50 items in line_split,
+  // unless the linux version is different from the one I'm developing on: newer linux -> more columns.
+  // So we check only that there are enough columns for super old linux: 36
+
+  if (line_split.size() < 36)  // Check !=50 for linux 3.5 till current (4.19), for better validation of the parse
+    throw std::runtime_error(std::string("Error parsing ")+pid_directory(pid) + kStatFilename+": wrong number of columns");
+  try {
+    // The column numbers here are referenced in "man proc" under "/proc/[pid]/stat"
+    pstat_data.utime = std::stoul(line_split[14+offset]);
+    pstat_data.stime = std::stoul(line_split[15+offset]);
+    pstat_data.cutime = std::stoul(line_split[16+offset]);
+    pstat_data.cstime = std::stoul(line_split[17+offset]);
+    pstat_data.starttime = std::stoull(line_split[22+offset]);
+    pstat_data.vsize = std::stoul(line_split[23+offset]);
+  }
+  catch (const std::invalid_argument & error){
+    throw std::runtime_error(std::string("Error parsing ")+pid_directory(pid) + kStatFilename+": unable to convert entries to numeric");
+  }
+}
+
 
 // TODO: Read and return the number of active jiffies for a PID
 // REMOVE: [[maybe_unused]] once you define the function
