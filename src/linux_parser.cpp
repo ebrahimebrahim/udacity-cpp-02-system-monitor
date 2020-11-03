@@ -118,18 +118,11 @@ void LinuxParser::ParseStats(LinuxParser::StatData & stat_data) {
     
     if (line_split.empty()) continue;
     
-    if (line_split[0] == "cpu" && line_split.size()>=11) {
+    if (line_split[0] == "cpu" && line_split.size() >= 1+NUM_CPU_STATES ) {
+      if (stat_data.cpu_times.size() < NUM_CPU_STATES) throw std::logic_error("stat_data size incorrect!");
       try {
-        stat_data.user_time = std::stoi(line_split[1]);
-        stat_data.nice_time = std::stoi(line_split[2]);
-        stat_data.system_time = std::stoi(line_split[3]);
-        stat_data.idle_time = std::stoi(line_split[4]);
-        stat_data.iowait_time = std::stoi(line_split[5]);
-        stat_data.irq_time = std::stoi(line_split[6]);
-        stat_data.softirq_time = std::stoi(line_split[7]);
-        stat_data.steal_time = std::stoi(line_split[8]);
-        stat_data.guest_time = std::stoi(line_split[9]);
-        stat_data.guest_nice_time = std::stoi(line_split[10]);
+        for (int i=0; i < NUM_CPU_STATES; ++i)
+          stat_data.cpu_times[i] = std::stoi(line_split[i+1]);
       }
       catch (...) {break;} // If there is a conversion error, then just don't set success flag and probably throw the exception below 
       success_flags |= 0b0000'0001;
@@ -137,7 +130,7 @@ void LinuxParser::ParseStats(LinuxParser::StatData & stat_data) {
 
     else if (line_split[0] == "processes" && line_split.size()>=2) {
       try {stat_data.total_processes = std::stoi(line_split[1]);}
-      catch (...) {break;}
+      catch (...) {break;} 
       success_flags |= 0b0000'0010;
     }
 
