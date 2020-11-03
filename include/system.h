@@ -33,6 +33,8 @@ class System {
   float memory_utilization{};
   long uptime{};
   LinuxParser::StatData stat_data{};
+
+  std::unordered_set<int> prev_pids{}; // Remember PIDs set from previous update()
 };
 
 #endif

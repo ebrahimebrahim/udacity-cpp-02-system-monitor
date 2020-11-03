@@ -1,28 +1,19 @@
 #include <unistd.h>
 #include <cstddef>
-#include <set>
 #include <string>
-#include <vector>
+#include <unordered_set>
 
 #include "linux_parser.h"
 #include "process.h"
 #include "processor.h"
 #include "system.h"
 
-using std::set;
 using std::size_t;
 using std::string;
-using std::vector;
 
 void System::init() {
   kernel = LinuxParser::Kernel();
   operating_system = LinuxParser::OperatingSystem();
-
-  const auto pids = LinuxParser::Pids();
-  for (auto const & pid : pids) {
-    processes.emplace_front(pid);
-    processes.front().init();
-  }
 
   update();
 }
@@ -41,4 +32,17 @@ void System::update() {
   processes.remove_if([&pids](const Process & process) {
     return pids.find(process.Pid())==pids.end();
   });
+
+  // create new processes that have showed up
+  std::unordered_set<int> new_processes{};
+  for (auto const & pid : pids){
+    if (prev_pids.find(pid)==prev_pids.end()){ // if pid is in pids but not prev_pids
+      processes.emplace_front(pid);
+      processes.front().init();
+      // TODO: init might fail if process disappeared by the time we reach here. If it does, pop front and forget about it.
+    }
+  }
+
+  // done using pids
+  prev_pids = std::move(pids);
 }
