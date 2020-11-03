@@ -21,9 +21,23 @@ std::ifstream try_open(const std::string & filepath);
 
 // Struct to represent what gets parsed from /proc/stat
 struct StatData {
-  int cpu_placeholder = 0; // TODO build up this struct to hold what you need from /proc/stat
-  int total_processes = 0;
-  int running_processes = 0;
+  // CPU info; see /proc/stat in "man proc"
+  using cpu_time_type = unsigned int;
+  cpu_time_type user_time{}; // Time spent in user mode
+  cpu_time_type nice_time{};   // Time spent in user mode with low priority (nice).
+  cpu_time_type system_time{}; // Time spent in system mode.
+  cpu_time_type idle_time{};   // Time spent in the idle task.  This value should be USER_HZ times the second entry in the /proc/uptime pseudo-file.
+  cpu_time_type iowait_time{}; // Time waiting for I/O to complete.  This value is not reliable, for the following reasons:
+  cpu_time_type irq_time{};    // Time servicing interrupts.
+  cpu_time_type softirq_time{}; // Time servicing softirqs.
+  cpu_time_type steal_time{}; // Stolen time, which is the time spent in other operating systems when running in a virtualized environment
+  cpu_time_type guest_time{}; // Time spent running a virtual CPU for guest operating systems under the control of the Linux kernel.
+  cpu_time_type guest_nice_time{}; // Time spent running a niced guest (virtual CPU for guest operating systems under the control of the Linux kernel).
+  
+  
+  // Process info
+  int total_processes{};
+  int running_processes{};
 };
 
 // System
@@ -48,13 +62,9 @@ enum CPUStates {  // TODO make this enum class for better type checking
   kGuest_,
   kGuestNice_
 };
-std::vector<std::string> CpuUtilization();
-long Jiffies();
-long ActiveJiffies();
-long ActiveJiffies(int pid);
-long IdleJiffies();
 
 // Processes
+long ActiveJiffies(int pid);
 std::string Command(int pid);
 std::string Ram(int pid);
 std::string Uid(int pid);

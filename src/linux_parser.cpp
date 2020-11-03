@@ -118,14 +118,26 @@ void LinuxParser::ParseStats(LinuxParser::StatData & stat_data) {
     
     if (line_split.empty()) continue;
     
-    if (line_split[0] == "cpu") {
-      stat_data.cpu_placeholder = 42; // TODO replace these placeholders w/ actual parse
+    if (line_split[0] == "cpu" && line_split.size()>=11) {
+      try {
+        stat_data.user_time = std::stoi(line_split[1]);
+        stat_data.nice_time = std::stoi(line_split[2]);
+        stat_data.system_time = std::stoi(line_split[3]);
+        stat_data.idle_time = std::stoi(line_split[4]);
+        stat_data.iowait_time = std::stoi(line_split[5]);
+        stat_data.irq_time = std::stoi(line_split[6]);
+        stat_data.softirq_time = std::stoi(line_split[7]);
+        stat_data.steal_time = std::stoi(line_split[8]);
+        stat_data.guest_time = std::stoi(line_split[9]);
+        stat_data.guest_nice_time = std::stoi(line_split[10]);
+      }
+      catch (...) {break;} // If there is a conversion error, then just don't set success flag and probably throw the exception below 
       success_flags |= 0b0000'0001;
     }
 
     else if (line_split[0] == "processes" && line_split.size()>=2) {
       try {stat_data.total_processes = std::stoi(line_split[1]);}
-      catch (...) {break;} // If there is a conversion error, then just don't set success flag and probably throw the exception below 
+      catch (...) {break;}
       success_flags |= 0b0000'0010;
     }
 
@@ -141,21 +153,9 @@ void LinuxParser::ParseStats(LinuxParser::StatData & stat_data) {
     throw std::runtime_error(std::string("Error parsing ")+kProcDirectory + kStatFilename);
 }
 
-// TODO: Read and return the number of jiffies for the system
-long LinuxParser::Jiffies() { return 0; }
-
 // TODO: Read and return the number of active jiffies for a PID
 // REMOVE: [[maybe_unused]] once you define the function
 long LinuxParser::ActiveJiffies(int pid [[maybe_unused]]) { return 0; }
-
-// TODO: Read and return the number of active jiffies for the system
-long LinuxParser::ActiveJiffies() { return 0; }
-
-// TODO: Read and return the number of idle jiffies for the system
-long LinuxParser::IdleJiffies() { return 0; }
-
-// TODO: Read and return CPU utilization
-vector<string> LinuxParser::CpuUtilization() { return {}; }
 
 // TODO: Read and return the command associated with a process
 // REMOVE: [[maybe_unused]] once you define the function

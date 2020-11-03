@@ -26,6 +26,6 @@ void System::update() {
   uptime = LinuxParser::UpTime();
   LinuxParser::ParseStats(stat_data);
   
-  cpu.update();
+  cpu.update(stat_data);
   for (Process& process : processes) process.update();
 }
