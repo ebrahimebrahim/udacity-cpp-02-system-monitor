@@ -4,6 +4,7 @@
 #include <fstream>
 #include <regex>
 #include <string>
+#include <unordered_set>
 
 namespace LinuxParser {
 // Paths
@@ -50,7 +51,7 @@ struct StatData {
 float MemoryUtilization();
 long UpTime();
 void ParseStats(StatData &);
-std::vector<int> Pids();
+std::unordered_set<int> Pids();
 std::string OperatingSystem();
 std::string Kernel();
 
