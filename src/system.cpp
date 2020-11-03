@@ -18,7 +18,7 @@ void System::init() {
   kernel = LinuxParser::Kernel();
   operating_system = LinuxParser::OperatingSystem();
 
-  auto pids = LinuxParser::Pids();
+  const auto pids = LinuxParser::Pids();
   for (auto const & pid : pids) {
     processes.emplace_front(pid);
     processes.front().init();
@@ -36,6 +36,9 @@ void System::update() {
   cpu.update(stat_data);
   for (Process& process : processes) process.update();
 
-  auto pids = LinuxParser::Pids();
-  // TODO prune forward list of processes
+  // prune processes that have disappeared
+  const auto pids = LinuxParser::Pids();
+  processes.remove_if([&pids](const Process & process) {
+    return pids.find(process.Pid())==pids.end();
+  });
 }
