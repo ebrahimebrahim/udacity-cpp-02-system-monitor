@@ -20,8 +20,8 @@ void System::init() {
 
   auto pids = LinuxParser::Pids();
   for (auto const & pid : pids) {
-    processes.emplace_back(pid);
-    processes.back().init();
+    processes.emplace_front(pid);
+    processes.front().init();
   }
 
   update();
@@ -30,8 +30,12 @@ void System::init() {
 void System::update() {
   memory_utilization = LinuxParser::MemoryUtilization();
   uptime = LinuxParser::UpTime();
+  
   LinuxParser::ParseStats(stat_data);
   
   cpu.update(stat_data);
   for (Process& process : processes) process.update();
+
+  auto pids = LinuxParser::Pids();
+  // TODO prune forward list of processes
 }

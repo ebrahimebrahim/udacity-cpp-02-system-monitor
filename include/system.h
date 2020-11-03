@@ -2,7 +2,7 @@
 #define SYSTEM_H
 
 #include <string>
-#include <vector>
+#include <forward_list>
 
 #include "process.h"
 #include "processor.h"
@@ -11,7 +11,7 @@
 class System {
  public:
   Processor& Cpu() { return cpu; }
-  std::vector<Process>& Processes() { return processes; }
+  std::forward_list<Process>& Processes() { return processes; }
   float MemoryUtilization() const { return memory_utilization; }
   long UpTime() const { return uptime; }
   int TotalProcesses() const { return stat_data.total_processes; }
@@ -29,7 +29,7 @@ class System {
 
   // Set on every update()
   Processor cpu{};
-  std::vector<Process> processes{};
+  std::forward_list<Process> processes{};
   float memory_utilization{};
   long uptime{};
   LinuxParser::StatData stat_data{};
