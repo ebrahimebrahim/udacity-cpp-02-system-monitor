@@ -22,12 +22,10 @@ void System::init() {
 }
 
 void System::update() {
-  cpu.update();
-
-  for (Process& process : processes) process.update();
-
   memory_utilization = LinuxParser::MemoryUtilization();
   uptime = LinuxParser::UpTime();
-  total_processes = LinuxParser::TotalProcesses();
-  running_processes = LinuxParser::RunningProcesses();
+  LinuxParser::ParseStats(stat_data);
+  
+  cpu.update();
+  for (Process& process : processes) process.update();
 }

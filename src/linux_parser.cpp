@@ -96,13 +96,47 @@ float LinuxParser::MemoryUtilization() {
   return float(memtotal - memfree)/float(memtotal);
  }
 
-// TODO: Read and return the system uptime
+
+// Parse system uptime from /proc/uptime
 long LinuxParser::UpTime() {
   std::ifstream ifs = try_open(kProcDirectory + kUptimeFilename);
   long uptime = 0;
   if (! (ifs >> uptime) )
     throw std::runtime_error(std::string("Error parsing uptime in ")+kProcDirectory + kUptimeFilename);
   return uptime;
+}
+
+
+// Parse cpu data and process count data from /proc/stat
+// Store the result in the argument stat_data
+void LinuxParser::ParseStats(LinuxParser::StatData & stat_data) {
+  std::ifstream ifs = try_open(kProcDirectory + kStatFilename);
+  std::string line;
+  uint_fast8_t success_flags = 0b0000'0000;
+  while(std::getline(ifs,line) && success_flags!=0b0000'0111) {
+    auto line_split = split_whitespace(line);
+    
+    if (line_split.empty()) continue;
+    
+    if (line_split[0] == "cpu") {
+      stat_data.cpu_placeholder = 42; // TODO replace these placeholders w/ actual parse
+      success_flags |= 0b0000'0001;
+    }
+
+    else if (line_split[0] == "processes") {
+      stat_data.total_processes = 42;
+      success_flags |= 0b0000'0010;
+    }
+
+    else if (line_split[0] == "procs_running") {
+      stat_data.running_processes = 43;
+      success_flags |= 0b0000'0100;
+    }
+
+  }
+
+  if (success_flags != 0b0000'0111)
+    throw std::runtime_error(std::string("Error parsing ")+kProcDirectory + kStatFilename);
 }
 
 // TODO: Read and return the number of jiffies for the system

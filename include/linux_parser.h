@@ -19,17 +19,26 @@ const std::string kOSPath{"/etc/os-release"};
 const std::string kPasswordPath{"/etc/passwd"};
 std::ifstream try_open(const std::string & filepath);
 
+// Struct to represent what gets parsed from /proc/stat
+struct StatData {
+  int cpu_placeholder = 0; // TODO build up this struct to hold what you need from /proc/stat
+  int total_processes = 0;
+  int running_processes = 0;
+};
+
 // System
 float MemoryUtilization();
 long UpTime();
+void ParseStats(StatData &);
 std::vector<int> Pids();
 int TotalProcesses();
 int RunningProcesses();
 std::string OperatingSystem();
 std::string Kernel();
 
+
 // CPU
-enum CPUStates {
+enum CPUStates {  // TODO make this enum class for better type checking
   kUser_ = 0,
   kNice_,
   kSystem_,

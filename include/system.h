@@ -6,6 +6,7 @@
 
 #include "process.h"
 #include "processor.h"
+#include "linux_parser.h"
 
 class System {
  public:
@@ -13,8 +14,8 @@ class System {
   std::vector<Process>& Processes() { return processes; }
   float MemoryUtilization() const { return memory_utilization; }
   long UpTime() const { return uptime; }
-  int TotalProcesses() const { return total_processes; }
-  int RunningProcesses() const { return running_processes; }
+  int TotalProcesses() const { return stat_data.total_processes; }
+  int RunningProcesses() const { return stat_data.running_processes; }
   std::string Kernel() const { return kernel; }
   std::string OperatingSystem() const { return operating_system; }
 
@@ -27,12 +28,11 @@ class System {
   std::string operating_system{};
 
   // Set on every update()
-  Processor cpu = {};
-  std::vector<Process> processes = {};
+  Processor cpu{};
+  std::vector<Process> processes{};
   float memory_utilization{};
   long uptime{};
-  int total_processes{};
-  int running_processes{};
+  LinuxParser::StatData stat_data{};
 };
 
 #endif
