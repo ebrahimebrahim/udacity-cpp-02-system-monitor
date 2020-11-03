@@ -31,8 +31,6 @@ float MemoryUtilization();
 long UpTime();
 void ParseStats(StatData &);
 std::vector<int> Pids();
-int TotalProcesses();
-int RunningProcesses();
 std::string OperatingSystem();
 std::string Kernel();
 
