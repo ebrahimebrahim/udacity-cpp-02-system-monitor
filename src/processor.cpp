@@ -1,8 +1,9 @@
 #include "processor.h"
 
 
-// TODO : update member variables as needed
 void Processor::update(const LinuxParser::StatData & stat_data) {
+
+    // https://stackoverflow.com/questions/23367857/accurate-calculation-of-cpu-usage-given-in-percentage-in-linux
 
     unsigned int idle = stat_data.cpu_times[LinuxParser::CPU_STATE_IDLE] + stat_data.cpu_times[LinuxParser::CPU_STATE_IOWAIT];
     unsigned int total = idle + 
