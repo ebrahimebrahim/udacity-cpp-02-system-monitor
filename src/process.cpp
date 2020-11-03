@@ -12,9 +12,11 @@ using std::vector;
 
 
 // TODO: update as needed
+// Can fail quietly if process no longer exists
 void Process::update() {}
 
 // TODO: update as needed
+// Can fail quietly if process no longer exists
 void Process::init() {}
 
 

@@ -35,6 +35,8 @@ class System {
   LinuxParser::StatData stat_data{};
 
   std::unordered_set<int> prev_pids{}; // Remember PIDs set from previous update()
+  int update_count{};
+
 };
 
 #endif
