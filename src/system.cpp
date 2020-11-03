@@ -18,6 +18,12 @@ void System::init() {
   kernel = LinuxParser::Kernel();
   operating_system = LinuxParser::OperatingSystem();
 
+  auto pids = LinuxParser::Pids();
+  for (auto const & pid : pids) {
+    processes.emplace_back(pid);
+    processes.back().init();
+  }
+
   update();
 }
 
