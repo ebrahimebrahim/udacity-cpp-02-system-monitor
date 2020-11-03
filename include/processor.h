@@ -9,9 +9,10 @@ class Processor {
 
   void update(const LinuxParser::StatData &);
 
-  // TODO: Declare any necessary private members
  private:
     float utilization{};
+    unsigned int prev_total{};
+    unsigned int prev_idle{};
 };
 
 #endif
