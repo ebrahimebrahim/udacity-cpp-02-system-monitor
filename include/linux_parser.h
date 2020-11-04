@@ -57,7 +57,7 @@ struct StatData {
 // Struct to represent what gets parsed from /proc/[pid]/stat
 // See "/proc/[pid]/stat" in "man proc" for details
 struct ProcessStatData {
-  // these are in clock ticks, divide by sysconf(_SC_CLK_TCK) to convert
+  // these are in clock ticks, divide by sysconf(_SC_CLK_TCK) to convert to seconds
   unsigned long utime{}; // Amount of time that this process has been scheduled in user mode
   unsigned long stime{}; // Amount of time that this process has been scheduled in kernel mode
   unsigned long cutime{}; // Amount  of  time  that this process's waited-for children have been scheduled in user mode

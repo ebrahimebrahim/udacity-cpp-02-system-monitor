@@ -44,7 +44,7 @@ void System::update() {
 
   // update all processes
   for (auto & process : processes)
-    process.update();
+    process.update(uptime);
 
   // sort processes every n updates
   if (update_count%10==0)
