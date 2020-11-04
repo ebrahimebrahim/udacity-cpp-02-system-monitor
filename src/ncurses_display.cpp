@@ -73,7 +73,9 @@ void NCursesDisplay::DisplayProcesses(std::forward_list<Process>& processes,
   int row_count{0};
   for (const auto & process : processes) {
     if (++row_count > n) break;
-    mvwprintw(window, ++row, pid_column, to_string(process.Pid()).c_str());
+    std::string pid_string{to_string(process.Pid())};
+    pid_string.resize(user_column-pid_column,' ');
+    mvwprintw(window, ++row, pid_column, pid_string.c_str());
     mvwprintw(window, row, user_column, process.User().c_str());
     float cpu = process.CpuUtilization() * 100;
     mvwprintw(window, row, cpu_column, to_string(cpu).substr(0, 4).c_str());
