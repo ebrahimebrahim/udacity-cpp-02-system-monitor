@@ -79,15 +79,17 @@ void NCursesDisplay::DisplayProcesses(std::forward_list<Process>& processes,
     std::string user_string = process.User();
     user_string.resize(cpu_column - user_column - 1,' ');
     mvwprintw(window, row, user_column, user_string.c_str());
-    float cpu = process.CpuUtilization() * 100;
+    const float cpu = process.CpuUtilization() * 100;
     mvwprintw(window, row, cpu_column, to_string(cpu).substr(0, 4).c_str());
     std::string ram_str = std::to_string(process.RamMB());
     ram_str.resize(time_column - ram_column - 1, ' ');
     mvwprintw(window, row, ram_column, ram_str.c_str());
     mvwprintw(window, row, time_column,
               Format::ElapsedTime(process.UpTime()).c_str());
+    std::string cmd_string = process.Command();
+    cmd_string.resize(window->_maxx - command_column, ' '); // TODO Why isnt this working?!
     mvwprintw(window, row, command_column,
-              process.Command().substr(0, window->_maxx - 46).c_str());
+              cmd_string.c_str());
   }
 }
 

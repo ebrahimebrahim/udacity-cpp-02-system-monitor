@@ -195,9 +195,17 @@ void LinuxParser::ParseProcessStats(int pid, LinuxParser::ProcessStatData & psta
   }
 }
 
-// TODO: Read and return the command associated with a process
-// REMOVE: [[maybe_unused]] once you define the function
-string LinuxParser::Command(int pid [[maybe_unused]]) { return string(); }
+// Read and return the command associated with a process
+string LinuxParser::Command(int pid) {
+  std::ifstream ifs = try_open(pid_directory(pid) + kCmdlineFilename);
+  std::ostringstream oss;
+  char c;
+  while (ifs.get(c)){
+    if (c=='\0') continue; // There are often nulls that mess up the c_str needed later
+    oss << c;
+  }
+  return oss.str();
+ }
 
 // TODO: Read and return the user ID associated with a process
 // REMOVE: [[maybe_unused]] once you define the function
