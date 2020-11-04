@@ -11,11 +11,19 @@ using std::to_string;
 using std::vector;
 
 
-// TODO: update as needed
 // Can fail quietly if process no longer exists
-void Process::init() {}
+std::string uid{};
+void Process::init() {
+  try {
+    uid = LinuxParser::Uid(pid);
+    cmd = LinuxParser::Command(pid);
+  }
+  catch (const LinuxParser::fileopen_error & error) {return;} // In this sitution the Process should get deleted soon
+  
+  user = LinuxParser::User(uid);
 
-// TODO: update as needed
+}
+
 // Can fail quietly if process no longer exists
 void Process::update(long system_uptime) {
   try {
@@ -36,17 +44,7 @@ void Process::update(long system_uptime) {
     prev_uptime = uptime;
   }
 
-
 }
-
-
-
-// TODO: Return the command that generated this process
-string Process::Command() const { return string(); }
-
-
-// TODO: Return the user (name) that generated this process
-string Process::User() const { return string(); }
 
 
 bool Process::operator<(Process const& a [[maybe_unused]]) const {

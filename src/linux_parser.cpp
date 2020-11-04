@@ -203,6 +203,6 @@ string LinuxParser::Command(int pid [[maybe_unused]]) { return string(); }
 // REMOVE: [[maybe_unused]] once you define the function
 string LinuxParser::Uid(int pid [[maybe_unused]]) { return string(); }
 
-// TODO: Read and return the user associated with a process
+// TODO: Read and return the user associated with a UID
 // REMOVE: [[maybe_unused]] once you define the function
-string LinuxParser::User(int pid [[maybe_unused]]) { return string(); }
+string LinuxParser::User(const std::string & uid [[maybe_unused]]) { return string(); }
