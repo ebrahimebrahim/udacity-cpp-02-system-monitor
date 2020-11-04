@@ -6,6 +6,24 @@
 
 This is a forked assignment, to be Ebrahim's solution to project 02 of udacity's c++ course.
 
+Processes are sorted by cpu usage,
+and they resort themselves every few updates.
+New processes will always show up at the top to start with,
+and then they will get moved to their proper position at the next sorting.
+
+CPU usage readings for processes seem to agree with results from htop.
+But something is not right: cpu usage can be over 100% sometimes.
+This also happens in htop.
+I suspect it's becuase processes can spend time on multiple cpus, but we are only dividing by "uptime."
+
+The quantity advertized as "RAM[MB]" of a process is not really memory usage,
+but rather some mysterious quantity called "virtual memory size."
+This is documented in "man proc," but I don't really understand what it means.
+The same number shows up as "M_SIZE" (column labled "VIRT") in htop; it doesn't seem to be very related to "MEM%".
+
+
+
+
 ---
 
 Starter code for System Monitor Project in the Object Oriented Programming Course of the [Udacity C++ Nanodegree Program](https://www.udacity.com/course/c-plus-plus-nanodegree--nd213). 
