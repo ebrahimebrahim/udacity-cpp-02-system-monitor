@@ -21,7 +21,6 @@ void Process::init() {
   catch (const LinuxParser::fileopen_error & error) {return;} // In this sitution the Process should get deleted soon
   
   user = LinuxParser::User(uid);
-
 }
 
 // Can fail quietly if process no longer exists

@@ -207,9 +207,17 @@ string LinuxParser::Command(int pid) {
   return oss.str();
  }
 
-// TODO: Read and return the user ID associated with a process
-// REMOVE: [[maybe_unused]] once you define the function
-string LinuxParser::Uid(int pid [[maybe_unused]]) { return string(); }
+// Read and return the user ID associated with a process
+string LinuxParser::Uid(int pid) {
+  std::ifstream ifs = try_open(pid_directory(pid) + kStatusFilename);
+  std::string line;
+  while (std::getline(ifs, line)) {
+    auto split_line = split(line, ":");
+    if (split_line.size() >= 2 && split_line[0] == "Uid")
+      return strip(split_line[1],{' ','\t'});
+  }
+  throw std::runtime_error(std::string("Error parsing ")+pid_directory(pid) + kStatusFilename);
+ }
 
 // TODO: Read and return the user associated with a UID
 // REMOVE: [[maybe_unused]] once you define the function
