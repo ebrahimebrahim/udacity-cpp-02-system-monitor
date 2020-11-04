@@ -205,7 +205,7 @@ string LinuxParser::Command(int pid) {
     oss << c;
   }
   return oss.str();
- }
+}
 
 // Read and return the user ID associated with a process
 string LinuxParser::Uid(int pid) {
@@ -213,12 +213,23 @@ string LinuxParser::Uid(int pid) {
   std::string line;
   while (std::getline(ifs, line)) {
     auto split_line = split(line, ":");
-    if (split_line.size() >= 2 && split_line[0] == "Uid")
-      return strip(split_line[1],{' ','\t'});
+    if (split_line.size() >= 2 && split_line[0] == "Uid"){
+      auto split_rhs = split_whitespace(split_line[1]);
+      if (!split_rhs.empty())
+        return split_rhs[0];
+    }
   }
   throw std::runtime_error(std::string("Error parsing ")+pid_directory(pid) + kStatusFilename);
- }
+}
 
-// TODO: Read and return the user associated with a UID
-// REMOVE: [[maybe_unused]] once you define the function
-string LinuxParser::User(const std::string & uid [[maybe_unused]]) { return string(); }
+// Read and return the user associated with a UID
+string LinuxParser::User(const std::string & uid) {
+  std::ifstream ifs = try_open(kPasswordPath);
+  std::string line;
+  while (std::getline(ifs, line)) {
+    auto split_line = split(line, ":");
+    if (split_line.size() >= 3 && split_line[2] == uid)
+      return split_line[0];
+  }
+  throw std::runtime_error(std::string("Error parsing ")+kPasswordPath+" to extract user with UID "+uid);
+}
