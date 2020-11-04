@@ -87,7 +87,7 @@ void NCursesDisplay::DisplayProcesses(std::forward_list<Process>& processes,
     mvwprintw(window, row, time_column,
               Format::ElapsedTime(process.UpTime()).c_str());
     std::string cmd_string = process.Command();
-    cmd_string.resize(window->_maxx - command_column, ' '); // TODO Why isnt this working?!
+    cmd_string.resize(window->_maxx - command_column, ' ');
     mvwprintw(window, row, command_column,
               cmd_string.c_str());
   }
@@ -116,7 +116,7 @@ void NCursesDisplay::Display(System& system, int n) {
     wrefresh(system_window);
     wrefresh(process_window);
     refresh();
-    std::this_thread::sleep_for(std::chrono::milliseconds(500)); // TODO increase this and make it not create a delay for first frame
+    std::this_thread::sleep_for(std::chrono::milliseconds(500)); 
     system.update();
   }
   endwin();
