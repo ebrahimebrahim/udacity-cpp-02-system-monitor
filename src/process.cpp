@@ -13,13 +13,18 @@ using std::vector;
 
 // TODO: update as needed
 // Can fail quietly if process no longer exists
-void Process::update() {
-  LinuxParser::ParseProcessStats(pid, pstat_data);
-}
+void Process::init() {}
 
 // TODO: update as needed
 // Can fail quietly if process no longer exists
-void Process::init() {}
+void Process::update() {
+  try {
+    LinuxParser::ParseProcessStats(pid, pstat_data);
+  }
+  catch (const LinuxParser::fileopen_error & error) {} // In this sitution the Process should get deleted soon
+}
+
+
 
 
 // TODO: Return this process's CPU utilization

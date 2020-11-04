@@ -5,6 +5,7 @@
 #include <regex>
 #include <string>
 #include <unordered_set>
+#include <stdexcept>
 
 namespace LinuxParser {
 // Paths
@@ -20,6 +21,11 @@ const std::string kOSPath{"/etc/os-release"};
 const std::string kPasswordPath{"/etc/passwd"};
 std::string pid_directory(int pid);
 std::ifstream try_open(const std::string & filepath);
+
+// Exception thrown for file opening errors
+class fileopen_error : public std::runtime_error {
+    using runtime_error::runtime_error;
+};
 
 // CPU states to serve as indices in vectors. See /proc/stat in "man proc"
 enum CPUStates {
@@ -74,6 +80,11 @@ void ParseProcessStats(int pid, ProcessStatData &);
 std::string Command(int pid);
 std::string Uid(int pid);
 std::string User(int pid);
+
+
+
+
+
 };  // namespace LinuxParser
 
 #endif

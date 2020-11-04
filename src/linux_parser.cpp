@@ -22,10 +22,10 @@ std::string LinuxParser::pid_directory(int pid) {
   return oss.str();
 }
 
-// Open file and return filestream, throwing an exception if it doesn't work out
+// Open file and return filestream, throwing a fileopen_error if it doesn't work out
 std::ifstream LinuxParser::try_open(const std::string & filepath) {
   std::ifstream ifs(filepath);
-  if (!ifs.is_open()) throw std::runtime_error(std::string("Unable to open file ")+filepath);
+  if (!ifs.is_open()) throw LinuxParser::fileopen_error(std::string("Unable to open file ")+filepath);
   return ifs;
 }
 
