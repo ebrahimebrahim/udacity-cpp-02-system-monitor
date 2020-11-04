@@ -41,13 +41,9 @@ void Process::update(long system_uptime) {
 
 
 
-
-
 // TODO: Return the command that generated this process
 string Process::Command() const { return string(); }
 
-// TODO: Return this process's memory utilization
-string Process::Ram() const { return string(); }
 
 // TODO: Return the user (name) that generated this process
 string Process::User() const { return string(); }

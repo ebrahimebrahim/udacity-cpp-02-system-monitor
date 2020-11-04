@@ -17,7 +17,7 @@ class Process {
   std::string User() const;                      // TODO: See src/process.cpp
   std::string Command() const;                   // TODO: See src/process.cpp
   float CpuUtilization() const {return cpu_usage;}                  // TODO: See src/process.cpp
-  std::string Ram() const;                       // TODO: See src/process.cpp
+  float RamMB() const {return float(pstat_data.vsize)/1e6;} // Ram usage in megabytes
   long UpTime() const {return long(uptime);}
   bool operator<(Process const& a) const;  // TODO: See src/process.cpp
 
