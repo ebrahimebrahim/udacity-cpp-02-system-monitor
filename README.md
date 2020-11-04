@@ -16,10 +16,10 @@ But something is not right: cpu usage can be over 100% sometimes.
 This also happens in htop.
 I suspect it's becuase processes can spend time on multiple cpus, but we are only dividing by "uptime."
 
-The quantity advertized as "RAM[MB]" of a process is not really memory usage,
+The quantity advertized as `RAM[MB]` of a process is not really memory usage,
 but rather some mysterious quantity called "virtual memory size."
-This is documented in "man proc," but I don't really understand what it means.
-The same number shows up as "M_SIZE" (column labled "VIRT") in htop; it doesn't seem to be very related to "MEM%".
+This is documented in `man proc`, but I don't really understand what it means.
+The same number shows up as `M_SIZE` (column labled `VIRT`) in htop; it doesn't seem to be very related to `MEM%`.
 
 
 
