@@ -1,4 +1,4 @@
-#include <filesystem>
+#include <dirent.h>
 #include <unistd.h>
 #include <string>
 #include <sstream>
@@ -57,17 +57,24 @@ string LinuxParser::Kernel() {
     return split[2];
 }
 
+
+// BONUS TODO: Update this to use std::filesystem
 std::unordered_set<int> LinuxParser::Pids() {
   std::unordered_set<int> pids;
-  for (const auto & dir_entry : std::filesystem::directory_iterator(kProcDirectory)){
-    std::ostringstream oss;
-    oss << dir_entry.path().filename();
-    std::string filename = strip(oss.str(),{'\"'});
-    if (std::all_of(filename.begin(), filename.end(), isdigit)) {
-      int pid = stoi(filename);
-      pids.insert(pid);
+  DIR* directory = opendir(kProcDirectory.c_str());
+  struct dirent* file;
+  while ((file = readdir(directory)) != nullptr) {
+    // Is this a directory?
+    if (file->d_type == DT_DIR) {
+      // Is every character of the name a digit?
+      string filename(file->d_name);
+      if (std::all_of(filename.begin(), filename.end(), isdigit)) {
+        int pid = stoi(filename);
+        pids.insert(pid);
+      }
     }
   }
+  closedir(directory);
   return pids;
 }
 
