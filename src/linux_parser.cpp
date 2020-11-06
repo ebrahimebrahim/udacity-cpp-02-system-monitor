@@ -202,6 +202,10 @@ string LinuxParser::Command(int pid) {
   char c;
   while (ifs.get(c)){
     if (c=='\0') continue; // There are often nulls that mess up the c_str needed later
+    if (c=='\n') {
+      oss << " <MORE LINES>"; // Sometimes cmdline has newlines in it
+      break;
+    }
     oss << c;
   }
   return oss.str();
