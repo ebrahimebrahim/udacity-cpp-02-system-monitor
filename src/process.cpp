@@ -20,7 +20,16 @@ void Process::init() {
   }
   catch (const LinuxParser::fileopen_error & error) {return;} // In this sitution the Process should get deleted soon
   
-  user = LinuxParser::User(uid);
+
+  // It's possible that the uid is not in /etc/passwd
+  // In this case just set the user string as unknown
+  try {
+    user = LinuxParser::User(uid);
+  }
+  catch (const LinuxParser::parse_error & error) {
+    user = "[???]";
+  }
+
 }
 
 // Can fail quietly if process no longer exists
@@ -48,6 +57,5 @@ void Process::update(long system_uptime) {
 
 bool Process::operator<(Process const& a) const {
   return cpu_usage > a.cpu_usage;
-  //return uptime < a.uptime;
 }
 

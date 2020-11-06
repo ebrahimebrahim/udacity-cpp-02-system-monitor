@@ -27,6 +27,11 @@ class fileopen_error : public std::runtime_error {
     using runtime_error::runtime_error;
 };
 
+// Exception thrown for parsing errors
+class parse_error : public std::runtime_error {
+    using runtime_error::runtime_error;
+};
+
 // CPU states to serve as indices in vectors. See /proc/stat in "man proc"
 enum CPUStates {
   CPU_STATE_USER = 0, // user mode

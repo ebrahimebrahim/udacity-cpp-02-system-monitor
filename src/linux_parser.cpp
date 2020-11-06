@@ -97,7 +97,7 @@ float LinuxParser::MemoryUtilization() {
     }
   }
   if (memtotal <= 0 || memfree < 0)
-    throw std::runtime_error(std::string("Error parsing MemTotal and MemAvailable in ")+kProcDirectory + kMeminfoFilename);
+    throw LinuxParser::parse_error(std::string("Error parsing MemTotal and MemAvailable in ")+kProcDirectory + kMeminfoFilename);
   
   return float(memtotal - memfree)/float(memtotal);
  }
@@ -108,7 +108,7 @@ long LinuxParser::UpTime() {
   std::ifstream ifs = try_open(kProcDirectory + kUptimeFilename);
   long uptime = 0;
   if (! (ifs >> uptime) )
-    throw std::runtime_error(std::string("Error parsing uptime in ")+kProcDirectory + kUptimeFilename);
+    throw LinuxParser::parse_error(std::string("Error parsing uptime in ")+kProcDirectory + kUptimeFilename);
   return uptime;
 }
 
@@ -149,7 +149,7 @@ void LinuxParser::ParseStats(LinuxParser::StatData & stat_data) {
   }
 
   if (success_flags != 0b0000'0111)
-    throw std::runtime_error(std::string("Error parsing ")+kProcDirectory + kStatFilename);
+    throw LinuxParser::parse_error(std::string("Error parsing ")+kProcDirectory + kStatFilename);
 }
 
 // Parse /proc/[pid]/stat
@@ -168,7 +168,7 @@ void LinuxParser::ParseProcessStats(int pid, LinuxParser::ProcessStatData & psta
     line = line.substr(right_paren_idx+1);
   }
   catch(const std::out_of_range & error) {
-    throw std::runtime_error(std::string("Error parsing ")+pid_directory(pid) + kStatFilename+": couldn't read past a right paren");
+    throw LinuxParser::parse_error(std::string("Error parsing ")+pid_directory(pid) + kStatFilename+": couldn't read past a right paren");
   }
 
   // It should be that we dropped 2 columns. Also, column numbers in "man proc" start counting at 1, not 0.
@@ -180,7 +180,7 @@ void LinuxParser::ParseProcessStats(int pid, LinuxParser::ProcessStatData & psta
   // So we check only that there are enough columns for super old linux: 36
 
   if (line_split.size() < 36)  // Check !=50 for linux 3.5 till current (4.19), for better validation of the parse
-    throw std::runtime_error(std::string("Error parsing ")+pid_directory(pid) + kStatFilename+": wrong number of columns");
+    throw LinuxParser::parse_error(std::string("Error parsing ")+pid_directory(pid) + kStatFilename+": wrong number of columns");
   try {
     // The column numbers here are referenced in "man proc" under "/proc/[pid]/stat"
     pstat_data.utime = std::stoul(line_split[14+offset]);
@@ -191,7 +191,7 @@ void LinuxParser::ParseProcessStats(int pid, LinuxParser::ProcessStatData & psta
     pstat_data.vsize = std::stoul(line_split[23+offset]);
   }
   catch (const std::invalid_argument & error){
-    throw std::runtime_error(std::string("Error parsing ")+pid_directory(pid) + kStatFilename+": unable to convert entries to numeric");
+    throw LinuxParser::parse_error(std::string("Error parsing ")+pid_directory(pid) + kStatFilename+": unable to convert entries to numeric");
   }
 }
 
@@ -223,10 +223,11 @@ string LinuxParser::Uid(int pid) {
         return split_rhs[0];
     }
   }
-  throw std::runtime_error(std::string("Error parsing ")+pid_directory(pid) + kStatusFilename);
+  throw LinuxParser::parse_error(std::string("Error parsing ")+pid_directory(pid) + kStatusFilename);
 }
 
 // Read and return the user associated with a UID
+// Searches throw /etc/passwd for the UID; throws exception if it's not found
 string LinuxParser::User(const std::string & uid) {
   std::ifstream ifs = try_open(kPasswordPath);
   std::string line;
@@ -235,5 +236,5 @@ string LinuxParser::User(const std::string & uid) {
     if (split_line.size() >= 3 && split_line[2] == uid)
       return split_line[0];
   }
-  throw std::runtime_error(std::string("Error parsing ")+kPasswordPath+" to extract user with UID "+uid);
+  throw LinuxParser::parse_error(std::string("Error parsing ")+kPasswordPath+" to extract user with UID "+uid);
 }
