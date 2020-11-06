@@ -46,7 +46,7 @@ void Process::update(long system_uptime) {
 }
 
 
-bool Process::operator<(Process const& a [[maybe_unused]]) const {
+bool Process::operator<(Process const& a) const {
   return cpu_usage > a.cpu_usage;
   //return uptime < a.uptime;
 }
